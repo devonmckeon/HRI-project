@@ -31,6 +31,23 @@ def get_quizNames():
 
 	return arr
 
+# At first the string will be splitted 
+# at the occurence of ';' to divide items  
+# for the dictionaryand then again splitting  
+# will be done at occurence of '=' which 
+# generates key:value pair for each item 
+# dictionary = dict(subString.split("=") for subString in str.split(";")) 
+
+def ac_to_dictionary(convert): 
+	# convert = "{" + convert + "}"
+	# convert = 'black = test3\n''red = test4\n''blue = test5\n''green = test6\n''yellow = test7\n''white = test8\n''brown = test9'
+	convert = convert.strip()
+	convert = convert.replace(" ", "")
+
+	dictionary = dict(subString.split(":") for subString in convert.split("\n")) 
+	return dictionary
+
+
 def get_quizDetails(quiz_name):
 	response = getAirtable(API_key, baseID, table_name)
 
@@ -42,27 +59,36 @@ def get_quizDetails(quiz_name):
 	Average_Performance = None # single value 
 	Percentile = None # single value 
 	Teacher_Aproval = None # single value 
+	Answer_choices = None
 	Answers = [] # Holds all answers to all questions 
 
 	for i in range(0, len(response['records'])):
 		if (quiz_name == response['records'][i]['fields']['Name']):
 			Quiz_Setting = response['records'][i]['fields']['Quiz settings']
 			Questions.append(response['records'][i]['fields']['Question'])
-			Response_Types.append(response['records'][i]['fields']['Response Type'])
+
+			if (response['records'][i]['fields']['Response Type'] == 'High five (yes/no)'):
+				Response_Types.append('yes_or_no')
+			elif (response['records'][i]['fields']['Response Type'] == 'Counting (number 0-10)'):
+				Response_Types.append('counting')
+			elif (response['records'][i]['fields']['Response Type'] == 'Colored blocks (multiple choice)'):
+				Response_Types.append('multiple_choice')
 
 			# Getting all answers
 			if (response['records'][i]['fields']['Response Type'] == 'High five (yes/no)'):
-				Answers.append(response['records'][i]['fields']['High Five answer'])
+				Answers.append((response['records'][i]['fields']['High Five answer']).lower())
 			elif (response['records'][i]['fields']['Response Type'] == 'Counting (number 0-10)'):
-				Answers.append(response['records'][i]['fields']['Counting answer'])
+				Answers.append(int(response['records'][i]['fields']['Counting answer']))
 			else:
 				# First slot is answer, second slot are each colors' meaning (aka Color follow up)
 				# The second slot contains '\n' which can be used to parse it 
-				pair = [
-							response['records'][i]['fields']['Colored blocks answers'], 
-							response['records'][i]['fields']['Colored blocks follow up']
-						]
-				Answers.append(pair)
+				Answers.append((response['records'][i]['fields']['Colored blocks answers']).lower())
+				# pair = [
+				# 			(response['records'][i]['fields']['Colored blocks answers']).lower(), 
+				# 			(response['records'][i]['fields']['Colored blocks follow up']).lower()
+				# 		]
+				Answer_choices = ac_to_dictionary((response['records'][i]['fields']['Colored blocks follow up']).lower())
+				# Answers.append(pair)
 
 			# If Quiz is in Leveled mode, obtain necessary values
 			if (Quiz_Setting != 'Standard'):
@@ -76,15 +102,16 @@ def get_quizDetails(quiz_name):
 					Teacher_Aproval = True
 
 	Quiz = {
-				"Quiz_Setting" : Quiz_Setting,
-				"Questions" : Questions,
-				"Response_Types" : Response_Types,
-				"Difficulty_Level" : Difficulty_Level,
-				"Progression_Type" : Progression_Type,
-				"Average_Performance" : Average_Performance,
-				"Percentile" : Percentile,
-				"Teacher_Aproval" : Teacher_Aproval,
-				"Answers" : Answers
+				'Quiz_Setting' : Quiz_Setting,
+				'Questions' : Questions,
+				'Response_Types' : Response_Types,
+				'Difficulty_Level' : Difficulty_Level,
+				'Progression_Type' : Progression_Type,
+				'Average_Performance' : Average_Performance,
+				'Percentile' : Percentile,
+				'Teacher_Aproval' : Teacher_Aproval,
+				'Answer_choices' : Answer_choices,
+				'Answers' : Answers
 			}
 	return Quiz
 
