@@ -3,6 +3,7 @@
 import urequests
 import json
 from pprint import pprint
+import math
 
 API_key = 'key4SssZ2nJDuK1KG'
 baseID = 'appneqFpKwgcok5kj'
@@ -22,9 +23,21 @@ def getAll():
     return response.json()
 
 
-# STILL NEEDS TO BE CODED
 def insert(fields):
-    return
+    url = 'https://api.airtable.com/v0/' + baseID + '/' + table_name + '/' + \
+        '?sort%5B0%5D%5Bfield%5D=Name&sort%5B0%5D%5Bdirection%5D=asc' + '/'
+    headers = {
+        "Authorization": "Bearer {}".format(API_key),
+        'Content-Type': 'application/json'
+    }
+    data = {
+        "fields": fields,
+        "typecast": False
+    }
+
+    response = urequests.post(url, headers=headers, json=data)
+    if (response.status_code != 200):
+        print('ERROR: Status ' + str(response.status_code))
 
 
 def update(id, fields):
@@ -51,8 +64,6 @@ def getStudentStats():
 def getClassSize():
     student_stats = getStudentStats()
     return len(student_stats)
-
-# STILL NEEDS TO BE CODED
 
 
 def createNewStudent(student_name):
@@ -98,11 +109,34 @@ def getPercentile(student_name):
     student = searchStudent(student_name)['fields']
     return student['Percentile']
 
-# STILL NEEDS TO BE CODED
+
+def compareVal(s):
+    return s['fields']['Average Performance']
 
 
 def updatePercentile(student_name):
-    return
+    student = searchStudent(student_name)
+
+    student_stats = getStudentStats()
+    class_size = getClassSize()
+    first_quarter_idx = math.floor(class_size / 4)
+    second_quarter_idx = 2 * first_quarter_idx
+    third_quarter_idx = 3 * first_quarter_idx
+
+    student_stats.sort(key=compareVal)
+    for i in range(len(student_stats)):
+        if student_stats[i]["fields"]["Name"] == student_name:
+            if i > third_quarter_idx:
+                percentile = .75
+            elif i > second_quarter_idx:
+                percentile = .50
+            elif i > first_quarter_idx:
+                percentile = .25
+            else:
+                percentile = 0
+            fields = {'Percentile': percentile}
+            update(student['id'], fields)
+            break
 
 
 def getAveragePerformance(student_name):
@@ -134,4 +168,5 @@ def updateStats(student_name, wasCorrect):
 
 # pprint(incrementQuestionsCompleted("Student1"))
 # pprint(getAll())
-# pprint(updateAveragePerformance("Student1"))
+# pprint(createNewStudent("Student1"))
+updatePercentile("Student3")
