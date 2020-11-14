@@ -9,6 +9,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from quiz import Quiz
+from leveled_quiz import LeveledQuiz
 
 from teacher_survey import get_quizNames
 from teacher_survey import get_quizDetails
@@ -21,14 +22,14 @@ from student_stats import createNewStudent
 # Create your objects here.
 ev3 = EV3Brick()
 
-student_name = "Student1"
+student_name = "Student100"
 sensors = {"touch": TouchSensor(Port.S4), "color": ColorSensor(Port.S1)}
 
 # Getting list of all quizzes
 list_of_quizzes = get_quizNames()
 # Setting form equal to only second 3rd quiz (You can use quiz name directly)
 # For example: get_quizDetails(list_of_quizzes["Quiz 1"])
-form = get_quizDetails(list_of_quizzes[2])
+form = get_quizDetails(list_of_quizzes[1])
 
 # print(list_of_quizzes)
 # pprint(form)
@@ -69,21 +70,6 @@ for i in range(len(form['Questions'])):
 # createNewStudent(student_name)
 
 # Create and administer quiz
-quiz = Quiz(questions, ev3, sensors, student_name)
+# print(form)
+quiz = Quiz(questions, ev3, sensors, student_name) # Conditional here, this is standard rn 
 quiz.administer(ev3)
-
-
-# answer_choices = {"black": "black", "red": "red", "blue": "blue",
-#                   "green": "green", "yellow": "yellow", "white": "white", "brown": "brown"}
-
-# multiple_choice_q = {"text": "What is the best color?", "question_type": "multiple_choice",
-#                      "correct_answer": "green", "answer_choices": answer_choices}
-
-# yes_or_no_q = {"text": "Is red the best color?",
-#                "question_type": "yes_or_no", "correct_answer": "yes"}
-
-# counting_q = {"text": "What is 2 plus 4?",
-#               "question_type": "counting", "correct_answer": 6}
-
-# This array should be filled with questions retrieved from Teacher Survey
-# questions = [counting_q, yes_or_no_q, multiple_choice_q]

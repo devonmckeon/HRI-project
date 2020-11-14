@@ -48,8 +48,7 @@ def ac_to_dictionary(convert):
     # convert = 'black = test3\n''red = test4\n''blue = test5\n''green = test6\n''yellow = test7\n''white = test8\n''brown = test9'
     convert = convert.strip()
     convert = convert.replace(" ", "")
-
-    dictionary = dict(subString.split(":")
+    dictionary = dict(subString.split("=")
                       for subString in convert.split("\n"))
     return dictionary
 
