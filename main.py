@@ -51,7 +51,11 @@ for i in range(len(form['Questions'])):
                 "answer_choices": form["Answer_choices"],
                 "difficulty": form["Difficulty_Level"][i]
             }
-        else: 
+<< << << < Updated upstream
+        else:
+== == == =
+        else:
+>>>>>> > Stashed changes
             all_questions["Q" + str(i)] = {
                 "text": form["Questions"][i],
                 "question_type": form["Response_Types"][i],
@@ -92,7 +96,7 @@ for i in range(len(form['Questions'])):
 # pprint(all_questions)
 # print(questions)
 
-# createNewStudent(student_name)
+createNewStudent(student_name)
 
 # Create and administer quiz
 # print(type(form["Quiz_Setting"]))
@@ -112,5 +116,6 @@ else:
         threshold = (float(threshold.strip('%')))/100
     # print(threshold_type)
     # print(threshold)
-    quiz = LeveledQuiz(questions, ev3, sensors, student_name, threshold_type, threshold)
+    quiz = LeveledQuiz(questions, ev3, sensors,
+                       student_name, threshold_type, threshold)
     quiz.leveled_administer(ev3, questions)

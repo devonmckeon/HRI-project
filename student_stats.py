@@ -89,7 +89,6 @@ def incrementQuestionsCompleted(student_name):
     incremented_completed = student['fields']['Questions Completed'] + 1
     fields = {'Questions Completed': incremented_completed}
     update(student['id'], fields)
-    return
 
 
 def getScore(student_name):
@@ -102,7 +101,6 @@ def incrementScore(student_name):
     incremented_score = student['fields']['Score'] + 1
     fields = {'Score': incremented_score}
     update(student['id'], fields)
-    return
 
 
 def getPercentile(student_name):
@@ -150,12 +148,17 @@ def updateAveragePerformance(student_name):
     score = student['fields']['Score']
     fields = {'Average Performance': score / questions_completed}
     update(student['id'], fields)
-    return
 
 
 def getApprovalStatus(student_name):
     student = searchStudent(student_name)['fields']
     return student['Status']
+
+
+def updateApprovalStatus(student_name, new_status):
+    student = searchStudent(student_name)
+    fields = {'Status': new_status}
+    update(student['id'], fields)
 
 
 def updateStats(student_name, wasCorrect):
@@ -164,9 +167,3 @@ def updateStats(student_name, wasCorrect):
         incrementScore(student_name)
     updateAveragePerformance(student_name)
     updatePercentile(student_name)
-
-
-# pprint(incrementQuestionsCompleted("Student1"))
-# pprint(getAll())
-# pprint(createNewStudent("Student1"))
-updatePercentile("Student3")
