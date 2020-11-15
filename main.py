@@ -22,7 +22,7 @@ from student_stats import createNewStudent
 # Create your objects here.
 ev3 = EV3Brick()
 
-student_name = "Student100"
+student_name = "Student1"
 sensors = {"touch": TouchSensor(Port.S4), "color": ColorSensor(Port.S1)}
 
 # Getting list of all quizzes
@@ -43,24 +43,49 @@ for i in range(len(form['Questions'])):
     all_questions["Q{0}".format(i)] = None
     # Setting each Q equal to proper format
     if (form["Response_Types"][i] == 'multiple_choice'):
-        all_questions["Q" + str(i)] = {
-            "text": form["Questions"][i],
-            "question_type": form["Response_Types"][i],
-            "correct_answer": form["Answers"][i],
-            "answer_choices": form["Answer_choices"]
-        }
+        if (form["Quiz_Setting"] != "Standard"):
+            all_questions["Q" + str(i)] = {
+                "text": form["Questions"][i],
+                "question_type": form["Response_Types"][i],
+                "correct_answer": form["Answers"][i],
+                "answer_choices": form["Answer_choices"],
+                "difficulty": form["Difficulty_Level"][i]
+            }
+        else: 
+            all_questions["Q" + str(i)] = {
+                "text": form["Questions"][i],
+                "question_type": form["Response_Types"][i],
+                "correct_answer": form["Answers"][i],
+                "answer_choices": form["Answer_choices"]
+            }
     elif (form["Response_Types"][i] == 'yes_or_no'):
-        all_questions["Q" + str(i)] = {
-            "text": form["Questions"][i],
-            "question_type": form["Response_Types"][i],
-            "correct_answer": form["Answers"][i]
-        }
+        if (form["Quiz_Setting"] != "Standard"):
+            all_questions["Q" + str(i)] = {
+                "text": form["Questions"][i],
+                "question_type": form["Response_Types"][i],
+                "correct_answer": form["Answers"][i],
+                "difficulty": form["Difficulty_Level"][i]
+            }
+        else:
+            all_questions["Q" + str(i)] = {
+                "text": form["Questions"][i],
+                "question_type": form["Response_Types"][i],
+                "correct_answer": form["Answers"][i]
+            }
     elif (form["Response_Types"][i] == 'counting'):
-        all_questions["Q" + str(i)] = {
-            "text": form["Questions"][i],
-            "question_type": form["Response_Types"][i],
-            "correct_answer": form["Answers"][i]
-        }
+        if (form["Quiz_Setting"] != "Standard"):
+            all_questions["Q" + str(i)] = {
+                "text": form["Questions"][i],
+                "question_type": form["Response_Types"][i],
+                "correct_answer": form["Answers"][i],
+                "difficulty": form["Difficulty_Level"][i]
+            }
+        else:
+            all_questions["Q" + str(i)] = {
+                "text": form["Questions"][i],
+                "question_type": form["Response_Types"][i],
+                "correct_answer": form["Answers"][i]
+            }
     # Adding each final Q to questions array
     questions.append(all_questions["Q" + str(i)])
 
@@ -70,6 +95,22 @@ for i in range(len(form['Questions'])):
 # createNewStudent(student_name)
 
 # Create and administer quiz
-# print(form)
-quiz = Quiz(questions, ev3, sensors, student_name) # Conditional here, this is standard rn 
-quiz.administer(ev3)
+# print(type(form["Quiz_Setting"]))
+if (form["Quiz_Setting"] == "Standard"):
+    quiz = Quiz(questions, ev3, sensors, student_name) 
+    quiz.administer(ev3)
+else: 
+    if (form["Progression_Type"] == "Average Performance (correct / total questions) in current level"):
+        threshold_type = "Average_Performance"
+        threshold = form["Average_Performance"]
+    elif (form["Progression_Type"] == "Teacher Approval"):
+        threshold_type = "Teacher_Approval"
+        threshold = "Teacher_Approval"
+    else:
+        threshold_type = "Percentile"
+        threshold = form["Percentile"]
+        threshold = (float(threshold.strip('%')))/100
+    # print(threshold_type)
+    # print(threshold)
+    quiz = LeveledQuiz(questions, ev3, sensors, student_name, threshold_type, threshold)
+    quiz.leveled_administer(ev3, questions)
