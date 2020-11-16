@@ -22,7 +22,6 @@ from student_stats import createNewStudent
 # Create your objects here.
 ev3 = EV3Brick()
 
-student_name = "Student1"
 sensors = {"touch": TouchSensor(Port.S4), "color": ColorSensor(Port.S1)}
 
 # Getting list of all quizzes
@@ -51,11 +50,7 @@ for i in range(len(form['Questions'])):
                 "answer_choices": form["Answer_choices"],
                 "difficulty": form["Difficulty_Level"][i]
             }
-<< << << < Updated upstream
         else:
-== == == =
-        else:
->>>>>> > Stashed changes
             all_questions["Q" + str(i)] = {
                 "text": form["Questions"][i],
                 "question_type": form["Response_Types"][i],
@@ -95,9 +90,13 @@ for i in range(len(form['Questions'])):
 
 # pprint(all_questions)
 # print(questions)
+student_name = input("Student Name: ") 
+phone_number = input("Teacher Phone Number (1XXXXXXXXXX): ")
+
+# Load pic of dog
+ev3.screen.load_image("dog.png")
 
 createNewStudent(student_name)
-
 # Create and administer quiz
 # print(type(form["Quiz_Setting"]))
 if (form["Quiz_Setting"] == "Standard"):
@@ -118,4 +117,4 @@ else:
     # print(threshold)
     quiz = LeveledQuiz(questions, ev3, sensors,
                        student_name, threshold_type, threshold)
-    quiz.leveled_administer(ev3, questions)
+    quiz.leveled_administer(ev3, questions, str(phone_number))

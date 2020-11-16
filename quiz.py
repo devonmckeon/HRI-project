@@ -32,3 +32,4 @@ class Quiz:
         for question in self.questions:
             question.ask(self.ev3)
             updateStats(self.student_name, question.isCorrect(self.sensors))
+

@@ -67,7 +67,7 @@ def getClassSize():
 
 
 def createNewStudent(student_name):
-    insert({'Name': student_name, 'Status': 'Seeking Approval',
+    insert({'Name': student_name, 'Status': 'N/A',
             'Questions Completed': 0, 'Score': 0, 'Average Performance': 0.00, 'Percentile': 0})
 
 
