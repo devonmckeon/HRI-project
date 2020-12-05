@@ -27,7 +27,7 @@ class Counting(Question):
             else:
                 is_pressed = False
 
-        if presses == self.correct_answer:
+        if presses == self.f_correct_answer:
             return True
         else:
             return False

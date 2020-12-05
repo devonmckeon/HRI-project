@@ -8,8 +8,8 @@ from text_alerts import alertThresholdNotMet, alertSeekingApproval
 
 
 class LeveledQuiz(Quiz):
-    def __init__(self, questions, ev3, sensors, student_name, threshold_type, threshold):
-        super().__init__(questions=questions, ev3=ev3,
+    def __init__(self, questions, ev3, sensors, robot, student_name, threshold_type, threshold):
+        super().__init__(questions=questions, ev3=ev3, robot=robot,
                          sensors=sensors, student_name=student_name)
         self.threshold_type = threshold_type
         self.threshold = threshold
@@ -30,8 +30,8 @@ class LeveledQuiz(Quiz):
             formatted_questions.append(formatted_q)
         return formatted_questions
 
-    def leveled_administer(self, ev3, quest, phone_number):
-        ev3.speaker.say("Let's begin a quiz.")
+    def leveled_administer(self, quest, phone_number):
+        self.ev3.speaker.say("Let's begin a quiz.")
         checked = False
         i = 0
         for question in self.questions:
@@ -39,30 +39,34 @@ class LeveledQuiz(Quiz):
             # Average Performance and Percentile
             if (self.threshold_type == "Average_Performance" or self.threshold_type == "Percentile"):
                 if (quest[i]["difficulty"] == "Intermediate"):
-                    if ((getAveragePerformance(self.student_name) < self.threshold and (checked == False)) 
+                    if ((getAveragePerformance(self.student_name) < self.threshold and (checked == False))
                             or (getPercentile(self.student_name) < self.threshold and (checked == False))):
                         alertThresholdNotMet(self.student_name, phone_number)
-                        updateApprovalStatus(self.student_name, "Seeking Approval")
-                        ev3.speaker.say("Score is not high enough to keep going")
+                        updateApprovalStatus(
+                            self.student_name, "Seeking Approval")
+                        self.ev3.speaker.say(
+                            "Score is not high enough to keep going")
                         while (getApprovalStatus(self.student_name) == "Seeking Approval"):
-                            ev3.speaker.say("Waiting for teacher")
+                            self.ev3.speaker.say("Waiting for teacher")
                             time.sleep(5)
                     checked = True
                     if (getApprovalStatus(self.student_name) == "Denied"):
-                        ev3.speaker.say("Quiz is finished")
+                        self.ev3.speaker.say("Quiz is finished")
                         return "Finished"
                 elif (quest[i]["difficulty"] == "Advanced"):
                     if ((getAveragePerformance(self.student_name) < self.threshold and (checked == True))
                             or (getPercentile(self.student_name) < self.threshold and (checked == True))):
                         alertThresholdNotMet(self.student_name, phone_number)
-                        updateApprovalStatus(self.student_name, "Seeking Approval")
-                        ev3.speaker.say("Score is not high enough to keep going")
+                        updateApprovalStatus(
+                            self.student_name, "Seeking Approval")
+                        self.ev3.speaker.say(
+                            "Score is not high enough to keep going")
                         while (getApprovalStatus(self.student_name) == "Seeking Approval"):
-                            ev3.speaker.say("Waiting for teacher")
+                            self.ev3.speaker.say("Waiting for teacher")
                             time.sleep(5)
                     checked = False
                     if (getApprovalStatus(self.student_name) == "Denied"):
-                        ev3.speaker.say("Quiz is finished")
+                        self.ev3.speaker.say("Quiz is finished")
                         return "Finished"
             # Teacher Approval
             elif (self.threshold_type == "Teacher_Approval"):
@@ -70,22 +74,24 @@ class LeveledQuiz(Quiz):
                     alertSeekingApproval(self.student_name, phone_number)
                     updateApprovalStatus(self.student_name, "Seeking Approval")
                     while (getApprovalStatus(self.student_name) == "Seeking Approval" and checked == False):
-                        ev3.speaker.say("Waiting for teacher")
+                        self.ev3.speaker.say("Waiting for teacher")
                         time.sleep(5)
                     checked = True
                     if (getApprovalStatus(self.student_name) == "Denied"):
-                        ev3.speaker.say("Quiz is finished")
+                        self.ev3.speaker.say("Quiz is finished")
                         return "Finished"
                 elif (quest[i]["difficulty"] == "Advanced"):
                     alertSeekingApproval(self.student_name, phone_number)
                     updateApprovalStatus(self.student_name, "Seeking Approval")
                     while (getApprovalStatus(self.student_name) == "Seeking Approval" and checked == True):
-                        ev3.speaker.say("Waiting for teacher")
+                        self.ev3.speaker.say("Waiting for teacher")
                         time.sleep(5)
                     checked = False
                     if (getApprovalStatus(self.student_name) == "Denied"):
-                        ev3.speaker.say("Quiz is finished")
+                        self.ev3.speaker.say("Quiz is finished")
                         return "Finished"
             question.ask(self.ev3)
-            updateStats(self.student_name, question.isCorrect(self.sensors))
+            is_correct = question.isCorrect(self.sensors)
+            question.giveFeedback(self.ev3, self.robot, is_correct)
+            updateStats(self.student_name, is_correct)
             i += 1

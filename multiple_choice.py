@@ -52,7 +52,7 @@ class MultipleChoice(Question):
         while color_sensor.color() == None:
             continue
         print(color_sensor.color())
-        if color_sensor.color() == self.correct_answer:
+        if color_sensor.color() == self.f_correct_answer:
             return True
         else:
             return False

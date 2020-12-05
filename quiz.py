@@ -5,10 +5,11 @@ from student_stats import updateStats
 
 
 class Quiz:
-    def __init__(self, questions, ev3, sensors, student_name):
+    def __init__(self, questions, ev3, sensors, robot, student_name):
         self.questions = self.prepQuestions(questions)
         self.ev3 = ev3
         self.sensors = sensors
+        self.robot = robot
         self.student_name = student_name
 
     def prepQuestions(self, questions):
@@ -26,10 +27,11 @@ class Quiz:
             formatted_questions.append(formatted_q)
         return formatted_questions
 
-    def administer(self, ev3):
-        ev3.speaker.say(
+    def administer(self):
+        self.ev3.speaker.say(
             "Let's begin a quiz.")
         for question in self.questions:
             question.ask(self.ev3)
-            updateStats(self.student_name, question.isCorrect(self.sensors))
-
+            is_correct = question.isCorrect(self.sensors)
+            question.giveFeedback(self.ev3, self.robot, is_correct)
+            updateStats(self.student_name, is_correct)

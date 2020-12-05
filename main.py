@@ -24,6 +24,11 @@ ev3 = EV3Brick()
 
 sensors = {"touch": TouchSensor(Port.S4), "color": ColorSensor(Port.S1)}
 
+motors = {"left": Motor(Port.A), "right": Motor(Port.D)}
+
+robot = DriveBase(
+    motors["left"], motors["right"], wheel_diameter=55.5, axle_track=104)
+
 # Getting list of all quizzes
 list_of_quizzes = get_quizNames()
 # Setting form equal to only second 3rd quiz (You can use quiz name directly)
@@ -90,7 +95,7 @@ for i in range(len(form['Questions'])):
 
 # pprint(all_questions)
 # print(questions)
-student_name = input("Student Name: ") 
+student_name = input("Student Name: ")
 phone_number = input("Teacher Phone Number (1XXXXXXXXXX): ")
 
 # Load pic of dog
@@ -100,9 +105,9 @@ createNewStudent(student_name)
 # Create and administer quiz
 # print(type(form["Quiz_Setting"]))
 if (form["Quiz_Setting"] == "Standard"):
-    quiz = Quiz(questions, ev3, sensors, student_name) 
-    quiz.administer(ev3)
-else: 
+    quiz = Quiz(questions, ev3, sensors, robot, student_name)
+    quiz.administer()
+else:
     if (form["Progression_Type"] == "Average Performance (correct / total questions) in current level"):
         threshold_type = "Average_Performance"
         threshold = form["Average_Performance"]
@@ -115,6 +120,6 @@ else:
         threshold = (float(threshold.strip('%')))/100
     # print(threshold_type)
     # print(threshold)
-    quiz = LeveledQuiz(questions, ev3, sensors,
+    quiz = LeveledQuiz(questions, ev3, sensors, robot,
                        student_name, threshold_type, threshold)
-    quiz.leveled_administer(ev3, questions, str(phone_number))
+    quiz.leveled_administer(questions, str(phone_number))
