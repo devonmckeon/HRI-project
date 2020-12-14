@@ -25,25 +25,25 @@ class MultipleChoice(Question):
 
     def ask(self, ev3):
         ev3.speaker.say(self.text)
-        if self.answer_choices["black"]:
+        if self.answer_choices["black"] != "n/a":
             ev3.speaker.say(
                 "Show me a black block for " + self.answer_choices["black"])
-        if self.answer_choices["red"]:
+        if self.answer_choices["red"] != "n/a":
             ev3.speaker.say(
                 "Show me a red block for " + self.answer_choices["red"])
-        if self.answer_choices["blue"]:
+        if self.answer_choices["blue"] != "n/a":
             ev3.speaker.say(
                 "Show me a blue block for " + self.answer_choices["blue"])
-        if self.answer_choices["green"]:
+        if self.answer_choices["green"] != "n/a":
             ev3.speaker.say(
                 "Show me a green block for " + self.answer_choices["green"])
-        if self.answer_choices["yellow"]:
+        if self.answer_choices["yellow"] != "n/a":
             ev3.speaker.say(
                 "Show me a yellow block for " + self.answer_choices["yellow"])
-        if self.answer_choices["white"]:
+        if self.answer_choices["white"] != "n/a":
             ev3.speaker.say(
                 "Show me a white block for " + self.answer_choices["white"])
-        if self.answer_choices["brown"]:
+        if self.answer_choices["brown"] != "n/a":
             ev3.speaker.say(
                 "Show me a brown block for " + self.answer_choices["brown"])
 

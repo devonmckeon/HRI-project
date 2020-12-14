@@ -16,7 +16,7 @@ class Question:
     def giveFeedback(self, ev3, robot, is_correct):
         if is_correct:
             ev3.speaker.say("Great job!")
-            robot.turn(360)
+            robot.turn(300)
 
         else:
             ev3.speaker.say("So close! The right answer was " +

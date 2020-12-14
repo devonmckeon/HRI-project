@@ -64,7 +64,8 @@ def get_quizDetails(quiz_name):
     Average_Performance = None  # single value
     Percentile = None  # single value
     Teacher_Aproval = None  # single value
-    Answer_choices = None
+    Answer_choices = {}
+    temp = 0
     Answers = []  # Holds all answers to all questions
 
     for i in range(0, len(response['records'])):
@@ -95,9 +96,12 @@ def get_quizDetails(quiz_name):
                 # 			(response['records'][i]['fields']['Colored blocks answers']).lower(),
                 # 			(response['records'][i]['fields']['Colored blocks follow up']).lower()
                 # 		]
-                Answer_choices = ac_to_dictionary(
+                Answer_choices["CHOICES"+str(temp)] = ac_to_dictionary(
                     (response['records'][i]['fields']['Colored blocks follow up']).lower())
+                temp += 1
                 # Answers.append(pair)
+                # print("HERE")
+                # print(Answer_choices)
 
             # If Quiz is in Leveled mode, obtain necessary values
             if (Quiz_Setting != 'Standard'):
@@ -110,7 +114,7 @@ def get_quizDetails(quiz_name):
                     Average_Performance = response['records'][i]['fields']['Average Performance']
                 else:
                     Teacher_Aproval = True
-
+    # print(Answer_choices)
     Quiz = {
         'Quiz_Setting': Quiz_Setting,
         'Questions': Questions,
@@ -123,6 +127,9 @@ def get_quizDetails(quiz_name):
         'Answer_choices': Answer_choices,
         'Answers': Answers
     }
+    # print("BEFORE")
+    # print(Quiz)
+    # print("END")
     return Quiz
 
 

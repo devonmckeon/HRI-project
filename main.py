@@ -32,12 +32,11 @@ robot = DriveBase(
 # Getting list of all quizzes
 list_of_quizzes = get_quizNames()
 # Setting form equal to only second 3rd quiz (You can use quiz name directly)
-# For example: get_quizDetails(list_of_quizzes["Quiz 1"])
 form = get_quizDetails(list_of_quizzes[1])
 
 # print(list_of_quizzes)
 # pprint(form)
-
+temp = 0
 # Dictionary to hold all Q's
 all_questions = {}
 # Array to hold finalized questions
@@ -48,13 +47,15 @@ for i in range(len(form['Questions'])):
     # Setting each Q equal to proper format
     if (form["Response_Types"][i] == 'multiple_choice'):
         if (form["Quiz_Setting"] != "Standard"):
+            # print("YOOO")
             all_questions["Q" + str(i)] = {
                 "text": form["Questions"][i],
                 "question_type": form["Response_Types"][i],
                 "correct_answer": form["Answers"][i],
-                "answer_choices": form["Answer_choices"],
+                "answer_choices": form["Answer_choices"]["CHOICES"+str(temp)],
                 "difficulty": form["Difficulty_Level"][i]
             }
+            temp += 1
         else:
             all_questions["Q" + str(i)] = {
                 "text": form["Questions"][i],
